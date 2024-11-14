@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login-box.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Welcome, GaMEEr</h2>
+    <form id="login-form">
+        <input type="text" class="input-field" name="username" placeholder="GaMEER Code" required>
+        <input type="password" class="input-field" name="password" placeholder="Password" required>
+        <button type="submit" class="login-btn">Login</button>
+    </form>
+</div>
+
+<script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
+        authDomain: "gameer-login.firebaseapp.com",
+        projectId: "gameer-login",
+        storageBucket: "gameer-login.firebasestorage.app",
+        messagingSenderId: "1081287852231",
+        appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
+        measurementId: "G-FL9Q322WG6"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore(); // Initialize Firestore
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const email = document.querySelector('input[name="username"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(async (userCredential) => {
+                    const user = userCredential.user;
+                    const userId = user.uid;
+
+                    // Save user data if it doesn’t exist
+                    async function saveUserData() {
+                        const userRef = db.collection("users").doc(userId);
+                        const docSnapshot = await userRef.get();
+
+                        if (!docSnapshot.exists) {
+                            await userRef.set({
+                                username: email,
+                                profilePicture: "defaultProfilePictureUrl"
+                            });
+                            console.log("User data saved successfully!");
+                        }
+                    }
+
+                    // Retrieve user data
+                    async function getUserData() {
+                        const userRef = db.collection("users").doc(userId);
+                        const docSnapshot = await userRef.get();
+
+                        if (docSnapshot.exists) {
+                            console.log("User data:", docSnapshot.data());
+                        } else {
+                            console.log("No user data found.");
+                        }
+                    }
+
+                    await saveUserData();
+                    await getUserData();
+
+                    alert('Login successful!');
+                    window.location.href = 'dashboard.html';
+                })
+                .catch((error) => {
+                    alert('Error: ' + error.message);
+                    console.error('Error Code:', error.code);
+                    console.error('Error Message:', error.message);
+                });
+        });
+    });
+</script>
+
+</body>
+</html>

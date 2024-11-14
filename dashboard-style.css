@@ -1,0 +1,410 @@
+/* General Font and Background Settings */
+body {
+    font-family: 'Orbitron', sans-serif;
+    background-color: #1a1a1a; /* Dark background for the body */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: flex-start; /* Align to the top */
+    height: 100vh; /* Full height of the viewport */
+}
+
+/* Outer Box Styling */
+.outer-box {
+    position: relative; /* Required for positioning the image */
+    width: 100%; /* Adjusted to 100% of the screen width */
+    max-width: 1000px; /* Optional: set a maximum width for larger screens */
+    padding: 20px; /* Padding around the inner welcome box */
+    background-image: url('Dashboard_BG.jpg'); /* Add your image URL here */
+    background-size: cover; /* Ensure the image covers the entire outer box */
+    background-position: center; /* Center the background image */
+    border-radius: 10px; /* Rounded corners */
+    margin-top: 20px; /* Margin at the top */
+    margin-bottom: 20px; /* Margin at the bottom for gap */
+}
+
+/* Welcome Message Box Styling */
+.welcome-box {
+    position: relative; /* Required for the glowing effect */
+    padding: 20px; /* Padding for the welcome box */
+    background: linear-gradient(135deg, #800080, #FFB6C1 , #4B0082); /* Purple, Lighter Pink, Indigo */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow for the welcome box */
+    text-align: center; /* Center text alignment */
+    overflow: hidden; /* Ensure glow doesn't overflow */
+    animation: boxGlow 1.5s infinite alternate; /* Animation for glowing effect */
+}
+
+/* Animation for the glowing effect */
+@keyframes boxGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(192, 192, 192, 0.6), 0 0 20px rgba(192, 192, 192, 0.4), 0 0 30px rgba(192, 192, 192, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(192, 192, 192, 1), 0 0 30px rgba(192, 192, 192, 0.8), 0 0 40px rgba(192, 192, 192, 0.6);
+    }
+}
+
+/* Centered Welcome Message */
+.welcome-box h2 {
+    font-size: 28px;
+    color: #1A1A2E; /* Solid deep space blue color */
+    margin: 0; /* Remove default margin */
+}
+
+/* Dashboard Container Styling */
+.dashboard-container {
+background-image: url('Textbox_BG.jpg'); /* Replace 'your-image.jpg' with the path to your image */
+    background-size: cover; /* Ensures the image covers the entire box */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    color: #FFFFFF; /* White text for contrast */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optional: Adding a semi-transparent overlay for readability */
+/* Dashboard Container with Gradient Background */
+.dashboard-container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 40px;
+    background: linear-gradient(135deg, #9400D3, #FF69B4, #4b0082); /* Neon gradient */
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+
+/* Text Box Styling */
+.text-box {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background for the text box */
+    padding: 40px; /* Increased padding for more space inside the text box */
+    border-radius: 10px; /* Rounded corners for the text box */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow for the text box */
+}
+
+/* Overview and Achievements Section Styling */
+.overview, .achievements {
+    margin: 20px 0; /* Margin between sections */
+}
+
+h3 {
+    color: #E0F7FA; /* Light color for section headings */
+    margin-bottom: 10px; /* Margin below section headings */
+}
+
+p {
+    color: #FFFFFF; /* Color for the paragraph text */
+}
+
+/* Profile Picture Container */
+.profile-edit-container {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center items vertically */
+}
+
+.profile-picture-container {
+    display: flex;
+    flex-direction: column; /* Stack image and button vertically */
+    align-items: center; /* Center horizontally */
+    margin-right: 20px; /* Space between profile picture and text box */
+}
+
+.profile-picture-container {
+    margin-right: 20px; /* Space between the profile picture and text boxes */
+}
+
+/* IGN Text Box */
+/* Editable Text Box Styles */
+.editable-text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    margin-bottom: 10px; /* Space below each text box */
+}
+
+.editable-text-box label {
+    color: #E0F7FA; /* Light color for label */
+    margin-bottom: 5px; /* Space below the label */
+}
+
+.editable-text-box input[type="text"] {
+    padding: 10px; /* Padding for the input */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #E0F7FA; /* Light border color */
+    background-color: rgba(255, 255, 255, 0.8); /* Less transparent background */
+    color: #000000; /* Text color for better readability */
+    width: 200px; /* Fixed width for the text box */
+    font-family: 'Orbitron', sans-serif; /* Apply the futuristic font */
+}
+
+/* Main Hero Text Box */
+/* Editable Text Box Styles */
+.editable-text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    margin-bottom: 10px; /* Space below each text box */
+}
+
+.editable-text-box label {
+    color: #E0F7FA; /* Light color for label */
+    margin-bottom: 5px; /* Space below the label */
+}
+
+.editable-text-box input[type="text"] {
+    padding: 10px; /* Padding for the input */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #E0F7FA; /* Light border color */
+    background-color: rgba(255, 255, 255, 0.8); /* Less transparent background */
+    color: #000000; /* Text color for better readability */
+    width: 200px; /* Fixed width for the text box */
+    font-family: 'Orbitron', sans-serif; /* Apply the futuristic font */
+}
+
+#profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #E0F7FA;
+}
+
+.edit-btn {
+    margin-top: 10px;
+    padding: 5px 15px; /* Center-aligned padding for button text */
+    background-color: #E0F7FA;
+    color: #1a1a1a;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.edit-btn:hover {
+    background-color: #FFB6C1;
+}
+
+/* Style for the outer box with background image */
+.dashboard-outer-box {
+    width: 80%; /* Adjust as needed */
+    padding: 20px;
+    background-image: url('Dashboard_BG.jpg'); /* Replace with the path to your background image */
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Optional shadow effect */
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+}
+
+/* Futuristic Text Box Styling */
+.text-box {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)); /* Light gradient background */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Adding a glowing animated border */
+.text-box::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #9400D3, #FF69B4, #4b0082, #9400D3); /* Neon gradient for glow */
+    background-size: 200% 200%;
+    animation: borderGlow 4s linear infinite;
+    z-index: -1;
+
+}
+
+/* Optional: Adding a semi-transparent overlay for readability */
+.text-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent overlay */
+    border-radius: 12px;
+    z-index: 1; /* Places overlay above background */
+}
+
+.text-box h3, .text-box p {
+    position: relative;
+    z-index: 2; /* Places text above the overlay */
+    color: #E0F7FA; /* Light cyan color for text to stand out */
+}
+
+/* Dashboard Container Styling */
+.dashboard-container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 40px;
+    background-image: url('Textbox_BG.jpg'); /* Background image for dashboard container */
+    background-size: cover; /* Ensures the image covers the entire box */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    text-align: center;
+}
+
+/* Futuristic Text Box Styling */
+.text-box {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)); /* Gradient background */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    color: #FFFFFF; /* White text for contrast */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optional: Adding a semi-transparent overlay for readability */
+.text-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(160, 32, 240, 0.7), rgba(255, 182, 193, 0.7), rgba(106, 13, 173, 0.7)); /* Gradient with transparency */
+    border-radius: 12px;
+    z-index: 1; /* Places overlay above background */
+}
+
+.text-box {
+    background: transparent; /* Make the text box background transparent */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    color: #FFFFFF; /* White text for contrast */
+    position: relative;
+    overflow: hidden;
+}
+
+.text-box h3, .text-box p {
+    position: relative;
+    z-index: 2; /* Places text above the overlay */
+    color: #E0F7FA; /* Light cyan color for text to stand out */
+}
+
+/* Text Box for Overview and Achievements */
+.text-box-1 {
+    margin-top: 20px; /* Adjust this value for the gap above the text box */
+    padding: 10px; /* Optional: Add padding for aesthetics */
+    border-radius: 10px; /* Optional: Rounded corners for the text box */
+    background-color: rgba(255, 255, 255, 0.8); /* Less transparent background */
+}
+
+/* Text Box Styling */
+.text-box-1 {
+    background: linear-gradient(135deg, rgba(128, 0, 128, 0.5), rgba(160, 32, 240, 0.5), rgba(0, 0, 0, 0.5)); /* More transparent gradient */
+    padding: 40px; /* Increased padding for more space inside the text box */
+    border-radius: 12px; /* Rounded corners for the text box */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    color: #FFFFFF; /* White text for contrast */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optional: Adding a glowing animated border */
+.text-box-1::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 12px;
+    background: linear-gradient(45deg, rgba(148, 0, 211, 0.5), rgba(255, 105, 180, 0.5), rgba(75, 0, 130, 0.5), rgba(148, 0, 211, 0.5)); /* More transparent neon gradient */
+    background-size: 200% 200%;
+    animation: borderGlow 4s linear infinite;
+    z-index: -1;
+}
+
+/* Overview and Achievements Section Styling */
+.overview, .achievements {
+    margin: 20px 0; /* Margin between sections */
+}
+
+.overview h3, .achievements h3 {
+    font-size: 32px; /* Increased font size */
+    color: #7DF9FF; /* Electric Blue */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow effect */
+    margin-bottom: 10px; /* Space below section headings */
+}
+
+p {
+    color: #FFFFFF; /* Color for the paragraph text */
+}
+
+/* Dashboard styles for the logout button */
+.logout-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, #6a1b9a, #1976d2); /* Purple to blue gradient */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Logout button hover effect */
+.logout-btn:hover {
+    background: linear-gradient(45deg, #8e24aa, #2196f3); /* Slightly lighter purple-blue gradient */
+    transform: scale(1.05);  /* Slight scaling effect for interaction */
+}
+
+/* Styling for the Save button */
+.save-btn {
+    background-color: #1e3a8a; /* Futuristic dark blue background */
+    border: 2px solid silver; /* Silver metallic border */
+    color: white; /* White text */
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+    font-size: 16px;
+    padding: 12px 20px; /* Adjust padding for a better shape */
+    border-radius: 50%; /* Circular button */
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 0 10px #1e3a8a, 0 0 20px #1e3a8a; /* Dark blue glow */
+    transition: all 0.3s ease-in-out; /* Smooth hover effect */
+}
+
+/* Add a hover effect to make the glow more intense */
+.save-btn:hover {
+    box-shadow: 0 0 25px #1e3a8a, 0 0 50px #1e3a8a; /* Dark blue glow on hover */
+    transform: scale(1.1); /* Slightly enlarge the button */
+}
+
+/* Adjusting the position of the Save button to the top-right corner of the Overview box */
+.text-box-1 {
+    position: relative; /* Make the text-box container the reference point for the button */
+}
+
+.save-btn {
+    position: absolute;
+    top: 10px; /* Space from the top edge of the Overview box */
+    right: 10px; /* Space from the right edge of the Overview box */
+    padding: 12px 20px; /* Padding for the button */
+}

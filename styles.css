@@ -1,0 +1,113 @@
+/* Body styling with background image */
+body, html {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background: url('Purple_BG.WebP') no-repeat center center fixed;
+    background-size: cover;
+/* Picture is owned by Peter_Rovder */
+}
+
+/* Login container styling */
+.login-container {
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+}
+
+/* Heading styling with futuristic font */
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #4b0082;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+}
+
+/* Input field styling */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Login button styling */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Login button hover effect */
+.login-btn:hover {
+    background-color: #3a0065;
+}
+
+/* Base styling for input fields */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.6); /* Light border */
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    color: #333;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+/* Placeholder styling with soft glow */
+.input-field::placeholder {
+    color: rgba(50, 50, 50, 0.6); /* Dim placeholder text */
+}
+
+/* Focus effect with subtle glow */
+.input-field:focus {
+    outline: none;
+    border-color: #00e6e6; /* Neon blue border on focus */
+    box-shadow: 0 0 8px rgba(0, 230, 230, 0.4); /* Subtle glow around border */
+    background: rgba(255, 255, 255, 0.9); /* Slightly more opaque background on focus */
+}
+
+/* Animated underline effect */
+.input-field::before,
+.input-field::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 0;
+    bottom: 0;
+    background: #00e6e6;
+    transition: width 0.3s ease;
+    z-index: 2;
+}
+
+/* Left to right underline animation on focus */
+.input-field:focus::before {
+    width: 100%;
+    left: 0;
+}
+
+/* Right to left underline animation on focus */
+.input-field:focus::after {
+    width: 100%;
+    right: 0;
+}

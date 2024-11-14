@@ -1,0 +1,81 @@
+/* General styling for the login container */
+.login-container {
+    position: relative;
+    padding: 30px;
+    background: #ffffff;
+    color: #4b0082;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Glowing border effect */
+.login-container::before,
+.login-container::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 12px; /* Slightly more rounded than the box */
+    z-index: -1;
+    background: linear-gradient(45deg, #9400D3, #4b0082, #00bfff, #9400D3);
+    background-size: 200% 200%;
+    animation: borderGlow 5s linear infinite;
+}
+
+/* Inner border to add dimension */
+.login-container::after {
+    filter: blur(6px); /* Creates a soft glow */
+    opacity: 0.7; /* Adds subtlety to the glow */
+}
+
+/* Animation for the gradient glow */
+@keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Styling for the heading text in the login box */
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #ffffff; /* Set color to white */
+    font-family: 'Orbitron', sans-serif; /* Optional: futuristic font */
+    font-size: 24px;
+}
+/* Base styling for the login button */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4b0082; /* Base color */
+    color: #ffffff; /* White color for button text */
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    position: relative;
+    overflow: hidden; /* Hide pseudo-element overflow */
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(173, 216, 230, 0.5); /* Futuristic white glow */
+}
+
+/* Hover effect for futuristic glow */
+.login-btn:hover {
+    background-color: #3a0065; /* Darker shade on hover */
+    color: #ffffff; /* Keeps text white */
+    box-shadow: 0 0 8px #00e6e6, 0 0 15px #00e6e6; /* Neon glow effect on hover */
+    transform: scale(1.05); /* Slightly enlarges button on hover */
+}
+
+.input-field {
+    font-family: 'Orbitron', sans-serif;
+    color: #1a1a1a; /* Futuristic dark shade of black */
+    background: rgba(255, 255, 255, 0.8); /* Subtle white background */
+    /* Other styles remain the same */
+}
