@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/GaMEE-Site/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="login-box.css">
+    <link rel="stylesheet" href="/GaMEE-Site/login-box.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -80,7 +80,7 @@
                     await getUserData();
 
                     alert('Login successful!');
-                    window.location.href = 'Dashboard.html';
+                    window.location.href = '/GaMEE-Site/Dashboard.html';
                 })
                 .catch((error) => {
                     alert('Error: ' + error.message);
