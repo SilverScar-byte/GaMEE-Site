@@ -1,5 +1,5 @@
 // Import necessary Firebase SDK modules
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -134,40 +134,15 @@ document.getElementById('save-button').addEventListener('click', async function(
         return;
     }
 
-    // Collect data from input fields
-    const username = document.getElementById('username').value;
-    const mainHero = document.getElementById('main-hero').value;
-    const overview = document.getElementById('overview-text-box').value;
-    const achievements = document.getElementById('achievements-text-box').value;
-    const profilePictureElement = document.getElementById('profile-picture');
-    const profilePictureFile = document.getElementById('profile-picture-input').files[0];  // Get the selected file if any
+    await saveUserData();
+});
 
-    let profilePictureUrl = profilePictureElement.src;  // Default to the current profile picture URL
-
-    // If a new profile picture is selected, upload it and get the URL
-    if (profilePictureFile) {
-        try {
-            profilePictureUrl = await uploadProfilePicture(profilePictureFile);  // Upload and get the URL
-        } catch (error) {
-            console.error("Error uploading profile picture:", error);
-            return;
-        }
-    }
-
-    // Now save the user data (including profile picture URL) to Firestore
-    const userRef = doc(db, "users", userId);
-    try {
-        await setDoc(userRef, {
-            username: username,
-            mainHero: mainHero,
-            overview: overview,
-            achievements: achievements,
-            profilePicture: profilePictureUrl  // Save the profile picture URL (whether updated or not)
-        }, { merge: true });
-        
-        alert("User data saved successfully!");
-    } catch (error) {
-        console.error("Error saving data:", error);
+// Check for user authentication status changes
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadUserData();
+    } else {
+        console.error("User is not logged in.");
     }
 });
 
