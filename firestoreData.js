@@ -9,7 +9,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
   authDomain: "gameer-login.firebaseapp.com",
   projectId: "gameer-login",
-  storageBucket: "gameer-login.firebasestorage.app",
+  storageBucket: "gameer-login.appspot.com",  // Corrected storage bucket URL
   messagingSenderId: "1081287852231",
   appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
   measurementId: "G-FL9Q322WG6"
@@ -25,7 +25,7 @@ const storage = getStorage(firebaseApp);
 
 // Function to save data to Firestore, including profile picture URL
 async function saveUserData() {
-    const userId = auth.currentUser ? auth.currentUser.uid : null;
+    const userId = auth.currentUser?.uid;
     if (!userId) {
         console.error("No user is logged in.");
         return;
@@ -51,15 +51,15 @@ async function saveUserData() {
         }
     }
 
-    // Now save the user data (including profile picture URL) to Firestore
+    // Save the user data (including profile picture URL) to Firestore
     const userRef = doc(db, "users", userId);
     try {
         await setDoc(userRef, {
-            username: username,
-            mainHero: mainHero,
-            overview: overview,
-            achievements: achievements,
-            profilePicture: profilePictureUrl  // Save the profile picture URL (whether updated or not)
+            username,
+            mainHero,
+            overview,
+            achievements,
+            profilePicture: profilePictureUrl
         }, { merge: true });
         
         alert("User data saved successfully!");
@@ -70,37 +70,32 @@ async function saveUserData() {
 
 // Function to upload a profile picture to Firebase Storage and return its URL
 async function uploadProfilePicture(file) {
-    const userId = auth.currentUser ? auth.currentUser.uid : null;
+    const userId = auth.currentUser?.uid;
     if (!userId) {
         console.error("No user is logged in.");
         return;
     }
 
     // Upload the image to Firebase Storage
-    const storageRef = ref(storage, 'profilePictures/' + userId);
+    const storageRef = ref(storage, `profilePictures/${userId}`);
     try {
         const snapshot = await uploadBytes(storageRef, file);
         const url = await getDownloadURL(snapshot.ref);  // Get the image URL
         console.log("Profile picture uploaded successfully!");
-
-        // Update the profile picture URL in Firestore
-        const userRef = doc(db, "users", userId);
-        await setDoc(userRef, {
-            profilePicture: url  // Save the uploaded picture URL in Firestore
-        }, { merge: true });
         
         return url;  // Return the URL for immediate use (e.g., to display the image)
     } catch (error) {
         console.error("Error uploading profile picture:", error);
+        throw error;  // Rethrow the error for handling in saveUserData
     }
 }
 
 // Function to load user data from Firestore, including profile picture
 async function loadUserData() {
-    const userId = auth.currentUser ? auth.currentUser.uid : null;
+    const userId = auth.currentUser?.uid;
     if (!userId) {
         console.error("No user is logged in.");
-        return null;
+        return;
     }
 
     const userRef = doc(db, "users", userId);
@@ -128,7 +123,7 @@ async function loadUserData() {
 
 // Event listener for the "Save" button
 document.getElementById('save-button').addEventListener('click', async function() {
-    const userId = auth.currentUser ? auth.currentUser.uid : null;
+    const userId = auth.currentUser?.uid;
     if (!userId) {
         console.error("No user is logged in.");
         return;
