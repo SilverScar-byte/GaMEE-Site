@@ -69,10 +69,7 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        document.getElementById('save-btn').addEventListener('click', () => {
-            saveUserData();
-        });
-
+        // Handle user logout
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.href = "/GaMEE-Site/index.html"; // Redirect to login page
@@ -100,6 +97,9 @@
                     document.getElementById('main-hero').value = data.mainHero || '';
                     document.getElementById('overview-text-box').value = data.overview || '';
                     document.getElementById('achievements-text-box').value = data.achievements || '';
+                    
+                    // Automatically save the loaded data
+                    saveUserData();
                 }
             }).catch((error) => {
                 console.error("Error loading user data:", error);
