@@ -62,7 +62,7 @@ async function saveUserData() {
             profilePicture: profilePictureUrl
         }, { merge: true });
         
-        alert("User data saved successfully!");
+        console.log("User data saved successfully!");
     } catch (error) {
         console.error("Error saving data:", error);
     }
@@ -113,6 +113,9 @@ async function loadUserData() {
             const profilePictureUrl = data.profilePicture || "images/default-profile.jpg";
             document.getElementById("profile-picture").src = profilePictureUrl;
             console.log("User data loaded successfully!");
+
+            // Automatically save the data once it's loaded
+            await saveUserData();
         } else {
             console.log("No user data found.");
         }
@@ -121,23 +124,14 @@ async function loadUserData() {
     }
 }
 
-// Event listener for the "Save" button
-document.getElementById('save-button').addEventListener('click', async function() {
-    const userId = auth.currentUser?.uid;
-    if (!userId) {
-        console.error("No user is logged in.");
-        return;
-    }
-
-    await saveUserData();
-});
-
-// Check for user authentication status changes
+// Check for user authentication status changes and load data or redirect
 onAuthStateChanged(auth, (user) => {
     if (user) {
+        console.log("User is authenticated, loading dashboard data...");
         loadUserData();
     } else {
-        console.error("User is not logged in.");
+        console.warn("User is not authenticated, redirecting to login.");
+        window.location.href = 'login.html';  // Ensure correct path for login page
     }
 });
 
