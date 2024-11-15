@@ -37,12 +37,10 @@
 
             <div class="text-box-1">
                 <h2 style="font-size: 1.5em; color: electricblue;">Overview</h2>
-                <textarea id="overview-text-box" name="overview-text-box" rows="4" cols="50"
-                    placeholder="GaMEEr Info."></textarea>
+                <textarea id="overview-text-box" rows="4" cols="50" placeholder="GaMEEr Info."></textarea>
 
                 <h2 style="font-size: 1.5em; color: electricblue;">Achievements</h2>
-                <textarea id="achievements-text-box" name="achievements-text-box" rows="4" cols="50"
-                    placeholder="GaMEEr Achievements."></textarea>
+                <textarea id="achievements-text-box" rows="4" cols="50" placeholder="GaMEEr Achievements."></textarea>
                 <button id="logout-btn" class="logout-btn">Logout</button>
             </div>
         </div>
@@ -55,13 +53,13 @@
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
+            apiKey: "YOUR_API_KEY",
             authDomain: "gameer-login.firebaseapp.com",
             projectId: "gameer-login",
             storageBucket: "gameer-login.firebasestorage.app",
-            messagingSenderId: "1081287852231",
-            appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
-            measurementId: "G-FL9Q322WG6"
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -69,91 +67,65 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        document.getElementById('save-btn').addEventListener('click', () => {
-            saveUserData();
-        });
+        const profilePicEl = document.getElementById('profile-picture');
+        const usernameEl = document.getElementById('username');
+        const mainHeroEl = document.getElementById('main-hero');
+        const overviewEl = document.getElementById('overview-text-box');
+        const achievementsEl = document.getElementById('achievements-text-box');
+        const uploadProfileEl = document.getElementById('upload-profile');
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
-                window.location.href = "/GaMEE-Site/index.html"; // Redirect to login page
-            }).catch((error) => {
-                console.error("Logout error:", error);
-            });
+                window.location.href = "/GaMEE-Site/index.html";
+            }).catch(console.error);
         });
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "/GaMEE-Site/index.html"; // Redirect to login if not authenticated
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                loadUserData(user.uid);
             } else {
-                loadUserData(user);
+                window.location.href = "/GaMEE-Site/index.html";
             }
         });
 
-        // Load user data
-        function loadUserData(user) {
-            const userRef = doc(db, "users", user.uid);
-            getDoc(userRef).then((docSnap) => {
+        function loadUserData(userId) {
+            const userRef = doc(db, "users", userId);
+            getDoc(userRef).then(docSnap => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    document.getElementById('profile-picture').src = data.profilePicture || 'images/default-profile.jpg';
-                    document.getElementById('username').value = data.username || '';
-                    document.getElementById('main-hero').value = data.mainHero || '';
-                    document.getElementById('overview-text-box').value = data.overview || '';
-                    document.getElementById('achievements-text-box').value = data.achievements || '';
+                    profilePicEl.src = data.profilePicture || 'default-profile.jpg';
+                    usernameEl.value = data.username || '';
+                    mainHeroEl.value = data.mainHero || '';
+                    overviewEl.value = data.overview || '';
+                    achievementsEl.value = data.achievements || '';
                 }
-            }).catch((error) => {
-                console.error("Error loading user data:", error);
-            });
+            }).catch(console.error);
         }
 
-        // Save user data to Firestore
-        function saveUserData() {
-            const user = auth.currentUser;
-            if (user) {
-                const userRef = doc(db, "users", user.uid);
-                const userData = {
-                    username: document.getElementById('username').value,
-                    mainHero: document.getElementById('main-hero').value,
-                    overview: document.getElementById('overview-text-box').value,
-                    achievements: document.getElementById('achievements-text-box').value,
-                };
-                setDoc(userRef, userData, { merge: true }).then(() => {
-                    console.log("User data saved!");
-                }).catch((error) => {
-                    console.error("Error saving user data:", error);
-                });
+        async function updateUserData(userId, data) {
+            const userRef = doc(db, "users", userId);
+            try {
+                await setDoc(userRef, data, { merge: true });
+                console.log("User data saved!");
+            } catch (error) {
+                console.error("Error saving user data:", error);
             }
         }
 
-        // Handle profile picture upload
-        document.getElementById('upload-profile').addEventListener('change', (e) => {
+        uploadProfileEl.addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if (file) {
-                const storageRef = ref(storage, 'profilePictures/' + auth.currentUser.uid);
-                uploadBytes(storageRef, file).then((snapshot) => {
-                    console.log("Uploaded a profile picture!");
-                    getDownloadURL(snapshot.ref).then((url) => {
-                        document.getElementById('profile-picture').src = url; // Update profile picture on UI
-                        // Store the URL in Firestore
-                        saveProfilePicture(url);
-                    });
-                }).catch((error) => {
+            if (file && auth.currentUser) {
+                const storageRef = ref(storage, `profilePictures/${auth.currentUser.uid}`);
+                try {
+                    await uploadBytes(storageRef, file);
+                    const url = await getDownloadURL(storageRef);
+                    profilePicEl.src = url;
+                    updateUserData(auth.currentUser.uid, { profilePicture: url });
+                } catch (error) {
                     console.error("Error uploading file:", error);
-                });
+                }
             }
         });
-
-        function saveProfilePicture(url) {
-            const user = auth.currentUser;
-            if (user) {
-                const userRef = doc(db, "users", user.uid);
-                setDoc(userRef, { profilePicture: url }, { merge: true }).then(() => {
-                    console.log("Profile picture URL saved!");
-                }).catch((error) => {
-                    console.error("Error saving profile picture URL:", error);
-                });
-            }
-        }
     </script>
 
 </body>
