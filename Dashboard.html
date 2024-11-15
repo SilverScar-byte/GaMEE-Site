@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GaMEER Dashboard</title>
     <!-- Link to the external stylesheet -->
-    <link rel="stylesheet" href="/GaMEE-Site/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <!-- Link to Google Fonts for the futuristic look -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <!-- Link to the dashboard stylesheet -->
-    <link rel="stylesheet" href="/GaMEE-Site/dashboard-style.css">
+    <link rel="stylesheet" href="dashboard-style.css">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
         <!-- Profile Picture and Editable Text Box Container -->
         <div class="profile-edit-container">
             <div class="profile-picture-container">
-                <img id="profile-picture" src="/GaMEE-Site/default-profile.jpg" alt="Profile Picture">
+                <img id="profile-picture" src="images/default-profile.jpg" alt="Profile Picture">
                 <label for="upload-profile" class="edit-btn">Edit</label>
                 <input type="file" id="upload-profile" style="display: none;">
             </div>
@@ -60,34 +60,50 @@
 
 <!-- Firebase Initialization Script - Using Module Type -->
 <script type="module">
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
-        authDomain: "gameer-login.firebaseapp.com",
-        projectId: "gameer-login",
-        storageBucket: "gameer-login.firebasestorage.app",
-        messagingSenderId: "1081287852231",
-        appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
-        measurementId: "G-FL9Q322WG6"
-    };
-
-    // Import the necessary Firebase SDK modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { saveUserData, loadUserData } from "/GaMEE-Site/firestoreData.js";
+    import { logout } from "/GaMEE-Site/logout.js";
+
+    // Firebase configuration (same as in your firestoreData.js)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
+      authDomain: "gameer-login.firebaseapp.com",
+      projectId: "gameer-login",
+      storageBucket: "gameer-login.firebasestorage.app",
+      messagingSenderId: "1081287852231",
+      appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
+      measurementId: "G-FL9Q322WG6"
+    };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
-    const analytics = getAnalytics(app);
+
+    // Ensure user is logged in
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            console.error("User is not logged in!");
+            window.location.href = "/GaMEE-Site/"; // Redirect to login page
+        } else {
+            loadUserData(); // Load user data once authenticated
+        }
+    });
+
+    // Save button event listener
+    document.getElementById("save-btn").addEventListener("click", async () => {
+        await saveUserData();
+    });
+
+    // Logout button event listener
+    document.getElementById("logout-btn").addEventListener("click", () => {
+        logout();
+    });
 </script>
 
-<!-- Link to Custom JavaScript Files (Ensure these are also module types) -->
-<script type="module" src="/GaMEE-Site/firestoreData.js"></script>
-<script type="module" src="/GaMEE-Site/profileUpload.js"></script>
-<script type="module" src="/GaMEE-Site/logout.js"></script>
+<!-- Link to Custom JavaScript Files -->
+<script type="module" src="firestoreData.js"></script>
+<script type="module" src="logout.js"></script>
 
 </body>
 </html>
