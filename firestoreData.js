@@ -5,13 +5,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
 
 // Firebase configuration (match with Dashboard.html)
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "gameer-login.firebaseapp.com",
-    projectId: "gameer-login",
-    storageBucket: "gameer-login.firebasestorage.app",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
+  authDomain: "gameer-login.firebaseapp.com",
+  projectId: "gameer-login",
+  storageBucket: "gameer-login.firebasestorage.app",
+  messagingSenderId: "1081287852231",
+  appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
+  measurementId: "G-FL9Q322WG6"
 };
 
 // Initialize Firebase
