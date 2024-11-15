@@ -1,6 +1,7 @@
 // Import necessary Firebase SDK modules
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 
 // Firebase configuration (match with Dashboard.html)
@@ -17,11 +18,12 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-// Get references to Firebase Authentication and Firestore
+// Get references to Firebase Authentication, Firestore, and Storage
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
+const storage = getStorage(firebaseApp);
 
-// Function to save data to Firestore
+// Function to save data to Firestore, including profile picture URL
 async function saveUserData() {
     const userId = auth.currentUser ? auth.currentUser.uid : null;
     if (!userId) {
@@ -34,6 +36,7 @@ async function saveUserData() {
     const mainHero = document.getElementById('main-hero').value;
     const overview = document.getElementById('overview-text-box').value;
     const achievements = document.getElementById('achievements-text-box').value;
+    const profilePicture = document.getElementById('profile-picture').src;  // Get the current profile picture URL
 
     // Get a reference to the user's document in Firestore
     const userRef = doc(db, "users", userId);
@@ -43,7 +46,8 @@ async function saveUserData() {
             username: username,
             mainHero: mainHero,
             overview: overview,
-            achievements: achievements
+            achievements: achievements,
+            profilePicture: profilePicture  // Save the profile picture URL
         });
         alert("User data saved successfully!");
     } catch (error) {
@@ -51,7 +55,34 @@ async function saveUserData() {
     }
 }
 
-// Function to load user data from Firestore
+// Function to upload a profile picture to Firebase Storage and return its URL
+async function uploadProfilePicture(file) {
+    const userId = auth.currentUser ? auth.currentUser.uid : null;
+    if (!userId) {
+        console.error("No user is logged in.");
+        return;
+    }
+
+    // Upload the image to Firebase Storage
+    const storageRef = ref(storage, 'profilePictures/' + userId);
+    try {
+        const snapshot = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snapshot.ref);  // Get the image URL
+        console.log("Profile picture uploaded successfully!");
+
+        // Update the profile picture URL in Firestore
+        const userRef = doc(db, "users", userId);
+        await setDoc(userRef, {
+            profilePicture: url  // Save the uploaded picture URL in Firestore
+        }, { merge: true });
+        
+        return url;  // Return the URL for immediate use (e.g., to display the image)
+    } catch (error) {
+        console.error("Error uploading profile picture:", error);
+    }
+}
+
+// Function to load user data from Firestore, including profile picture
 async function loadUserData() {
     const userId = auth.currentUser ? auth.currentUser.uid : null;
     if (!userId) {
@@ -69,6 +100,10 @@ async function loadUserData() {
             document.getElementById("main-hero").value = data.mainHero || "";
             document.getElementById("overview-text-box").value = data.overview || "";
             document.getElementById("achievements-text-box").value = data.achievements || "";
+
+            // Load the profile picture if available
+            const profilePictureUrl = data.profilePicture || "images/default-profile.jpg";
+            document.getElementById("profile-picture").src = profilePictureUrl;
             console.log("User data loaded successfully!");
         } else {
             console.log("No user data found.");
@@ -79,4 +114,4 @@ async function loadUserData() {
 }
 
 // Export the functions for use in Dashboard.html
-export { saveUserData, loadUserData };
+export { saveUserData, loadUserData, uploadProfilePicture };
