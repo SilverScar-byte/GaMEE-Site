@@ -408,3 +408,23 @@ p {
     right: 10px; /* Space from the right edge of the Overview box */
     padding: 12px 20px; /* Padding for the button */
 }
+
+/* Profile Picture Upload Functionality */
+#profile-picture-upload {
+    display: none; /* Hide the actual file input */
+}
+
+#upload-label {
+    cursor: pointer; /* Change cursor to pointer on hover */
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #E0F7FA; /* Matching button color */
+    color: #1a1a1a;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+}
+
+#upload-label:hover {
+    background-color: #FFB6C1; /* Hover color */
+}
