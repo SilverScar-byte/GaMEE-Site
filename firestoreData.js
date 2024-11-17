@@ -1,118 +1,125 @@
 // Import necessary Firebase SDK modules
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 
-// Firebase configuration
+// Firebase configuration (match with Dashboard.html)
 const firebaseConfig = {
-    apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
-    authDomain: "gameer-login.firebaseapp.com",
-    projectId: "gameer-login",
-    storageBucket: "gameer-login.appspot.com",
-    messagingSenderId: "1081287852231",
-    appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
-    measurementId: "G-FL9Q322WG6"
+  apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
+  authDomain: "gameer-login.firebaseapp.com",
+  projectId: "gameer-login",
+  storageBucket: "gameer-login.appspot.com",
+  messagingSenderId: "1081287852231",
+  appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
+  measurementId: "G-FL9Q322WG6"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+const firebaseApp = initializeApp(firebaseConfig);
 
-// Save user data to Firestore
+// Get references to Firebase Authentication and Firestore
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+
+// Cloudinary configuration
+const cloudinaryUploadUrl = "https://api.cloudinary.com/v1_1/<your-cloud-name>/upload";
+const cloudinaryPreset = "<your-upload-preset>";
+
+// Function to save data to Firestore, excluding profile picture upload
 async function saveUserData() {
-    const user = auth.currentUser;
-    if (!user) {
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
         console.error("No user is logged in.");
         return;
     }
 
-    const userId = user.uid;
+    // Collect data from input fields
     const username = document.getElementById('username').value;
     const mainHero = document.getElementById('main-hero').value;
     const overview = document.getElementById('overview-text-box').value;
     const achievements = document.getElementById('achievements-text-box').value;
-    const profilePictureElement = document.getElementById('profile-picture');
-    const profilePictureFile = document.getElementById('upload-profile').files[0];
 
-    let profilePictureUrl = profilePictureElement.src;
-
-    if (profilePictureFile) {
-        try {
-            profilePictureUrl = await uploadProfilePicture(profilePictureFile);
-        } catch (error) {
-            console.error("Error uploading profile picture:", error);
-            return;
-        }
-    }
-
+    // Save the user data to Firestore
+    const userRef = doc(db, "users", userId);
     try {
-        await setDoc(doc(db, "users", userId), {
+        await setDoc(userRef, {
             username,
             mainHero,
             overview,
-            achievements,
-            profilePicture: profilePictureUrl
+            achievements
         }, { merge: true });
         console.log("User data saved successfully!");
     } catch (error) {
-        console.error("Error saving user data:", error);
+        console.error("Error saving data:", error);
     }
 }
 
-// Upload profile picture to Firebase Storage and return URL
+// Function to upload a profile picture to Cloudinary and return its URL
 async function uploadProfilePicture(file) {
-    const user = auth.currentUser;
-    if (!user) {
-        throw new Error("No user is logged in.");
-    }
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", cloudinaryPreset);
 
-    const storageRef = ref(storage, `profilePictures/${user.uid}`);
     try {
-        const snapshot = await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(snapshot.ref);
+        const response = await fetch(cloudinaryUploadUrl, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Cloudinary upload failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
         console.log("Profile picture uploaded successfully!");
-        return url;
+        return data.secure_url; // Return the Cloudinary URL
     } catch (error) {
-        throw new Error("Error uploading profile picture: " + error.message);
+        console.error("Error uploading profile picture:", error);
+        throw error; // Rethrow the error for handling in saveUserData
     }
 }
 
-// Load user data from Firestore
+// Function to load user data from Firestore
 async function loadUserData() {
-    const user = auth.currentUser;
-    if (!user) {
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
         console.error("No user is logged in.");
         return;
     }
 
+    const userRef = doc(db, "users", userId);
+
     try {
-        const docSnap = await getDoc(doc(db, "users", user.uid));
+        const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
             const data = docSnap.data();
-            document.getElementById('username').value = data.username || "";
-            document.getElementById('main-hero').value = data.mainHero || "";
-            document.getElementById('overview-text-box').value = data.overview || "";
-            document.getElementById('achievements-text-box').value = data.achievements || "";
-            document.getElementById('profile-picture').src = data.profilePicture || "images/default-profile.jpg";
+            document.getElementById("username").value = data.username || "";
+            document.getElementById("main-hero").value = data.mainHero || "";
+            document.getElementById("overview-text-box").value = data.overview || "";
+            document.getElementById("achievements-text-box").value = data.achievements || "";
+
+            // Load the profile picture from the Cloudinary URL if available
+            const profilePictureUrl = data.profilePicture || "images/default-profile.jpg";
+            document.getElementById("profile-picture").src = profilePictureUrl;
             console.log("User data loaded successfully!");
         } else {
             console.log("No user data found.");
         }
     } catch (error) {
-        console.error("Error loading user data:", error);
+        console.error("Error loading data:", error);
     }
 }
 
-// Monitor authentication state
+// Check for user authentication status changes and load data or redirect
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        console.log("User authenticated. Loading data...");
+        console.log("User is authenticated, loading dashboard data...");
         loadUserData();
     } else {
-        console.warn("User not authenticated. Redirecting to login.");
-        window.location.href = "login.html";
+        console.warn("User is not authenticated, redirecting to login.");
+        window.location.href = 'login.html'; // Ensure correct path for login page
     }
 });
+
+// Export the functions for use in Dashboard.html
+export { saveUserData, loadUserData, uploadProfilePicture };
