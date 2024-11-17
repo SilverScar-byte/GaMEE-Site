@@ -49,120 +49,120 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
-            authDomain: "gameer-login.firebaseapp.com",
-            projectId: "gameer-login",
-            storageBucket: "gameer-login.appspot.com",
-            messagingSenderId: "1081287852231",
-            appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
-            measurementId: "G-FL9Q322WG6"
+const firebaseConfig = {
+    apiKey: "AIzaSyBcl9zwXRRNnxmKlvB0LBaIPXX7kIxxohA",
+    authDomain: "gameer-login.firebaseapp.com",
+    projectId: "gameer-login",
+    storageBucket: "gameer-login.appspot.com",
+    messagingSenderId: "1081287852231",
+    appId: "1:1081287852231:web:7fe00f84f1c7e1aaecfee2",
+    measurementId: "G-FL9Q322WG6"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Cloudinary configuration
+const cloudName = "dtvuyshnm"; // Replace with your Cloudinary cloud name
+const unsignedUploadPreset = "Profile Pictures"; // Replace with your Cloudinary upload preset
+
+// Handle user logout
+document.getElementById('logout-btn').addEventListener('click', () => {
+    signOut(auth).then(() => {
+        window.location.href = "/GaMEE-Site/index.html"; // Redirect to login page
+    }).catch((error) => {
+        console.error("Logout error:", error);
+    });
+});
+
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.href = "/GaMEE-Site/index.html"; // Redirect to login if not authenticated
+    } else {
+        loadUserData(user);
+    }
+});
+
+// Load user data
+function loadUserData(user) {
+    const userRef = doc(db, "users", user.uid);
+    getDoc(userRef).then((docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('profile-picture').src = data.profilePicture || 'images/default-profile.jpg';
+            document.getElementById('username').value = data.username || '';
+            document.getElementById('main-hero').value = data.mainHero || '';
+            document.getElementById('overview-text-box').value = data.overview || '';
+            document.getElementById('achievements-text-box').value = data.achievements || '';
+            
+            // Automatically save the loaded data
+            saveUserData();
+        }
+    }).catch((error) => {
+        console.error("Error loading user data:", error);
+    });
+}
+
+// Save user data to Firestore
+function saveUserData() {
+    const user = auth.currentUser;
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userData = {
+            username: document.getElementById('username').value,
+            mainHero: document.getElementById('main-hero').value,
+            overview: document.getElementById('overview-text-box').value,
+            achievements: document.getElementById('achievements-text-box').value,
         };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Cloudinary configuration
-        const cloudName = "dtvuyshnm"; // Replace with your Cloudinary cloud name
-        const unsignedUploadPreset = "Profile Pictures"; // Replace with your Cloudinary upload preset
-
-        // Handle user logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = "/GaMEE-Site/index.html"; // Redirect to login page
-            }).catch((error) => {
-                console.error("Logout error:", error);
-            });
+        setDoc(userRef, userData, { merge: true }).then(() => {
+            console.log("User data saved!");
+        }).catch((error) => {
+            console.error("Error saving user data:", error);
         });
+    }
+}
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "/GaMEE-Site/index.html"; // Redirect to login if not authenticated
-            } else {
-                loadUserData(user);
-            }
+// Handle profile picture upload
+document.getElementById('upload-profile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', unsignedUploadPreset);
+
+        // Upload to Cloudinary
+        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const imageUrl = data.secure_url;
+            document.getElementById('profile-picture').src = imageUrl; // Update profile picture on UI
+            saveProfilePicture(imageUrl);
+        })
+        .catch((error) => {
+            console.error("Error uploading to Cloudinary:", error);
         });
+    }
+});
 
-        // Load user data
-        function loadUserData(user) {
-            const userRef = doc(db, "users", user.uid);
-            getDoc(userRef).then((docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('profile-picture').src = data.profilePicture || 'images/default-profile.jpg';
-                    document.getElementById('username').value = data.username || '';
-                    document.getElementById('main-hero').value = data.mainHero || '';
-                    document.getElementById('overview-text-box').value = data.overview || '';
-                    document.getElementById('achievements-text-box').value = data.achievements || '';
-                    
-                    // Automatically save the loaded data
-                    saveUserData();
-                }
-            }).catch((error) => {
-                console.error("Error loading user data:", error);
-            });
-        }
-
-        // Save user data to Firestore
-        function saveUserData() {
-            const user = auth.currentUser;
-            if (user) {
-                const userRef = doc(db, "users", user.uid);
-                const userData = {
-                    username: document.getElementById('username').value,
-                    mainHero: document.getElementById('main-hero').value,
-                    overview: document.getElementById('overview-text-box').value,
-                    achievements: document.getElementById('achievements-text-box').value,
-                };
-                setDoc(userRef, userData, { merge: true }).then(() => {
-                    console.log("User data saved!");
-                }).catch((error) => {
-                    console.error("Error saving user data:", error);
-                });
-            }
-        }
-
-        // Handle profile picture upload
-        document.getElementById('upload-profile').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', unsignedUploadPreset);
-
-                // Upload to Cloudinary
-                fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const imageUrl = data.secure_url;
-                    document.getElementById('profile-picture').src = imageUrl; // Update profile picture on UI
-                    saveProfilePicture(imageUrl);
-                })
-                .catch((error) => {
-                    console.error("Error uploading to Cloudinary:", error);
-                });
-            }
+function saveProfilePicture(url) {
+    const user = auth.currentUser;
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        setDoc(userRef, { profilePicture: url }, { merge: true }).then(() => {
+            console.log("Profile picture URL saved!");
+        }).catch((error) => {
+            console.error("Error saving profile picture URL:", error);
         });
-
-        function saveProfilePicture(url) {
-            const user = auth.currentUser;
-            if (user) {
-                const userRef = doc(db, "users", user.uid);
-                setDoc(userRef, { profilePicture: url }, { merge: true }).then(() => {
-                    console.log("Profile picture URL saved!");
-                }).catch((error) => {
-                    console.error("Error saving profile picture URL:", error);
-                });
-            }
-        }
+    }
+}
     </script>
 
 </body>
