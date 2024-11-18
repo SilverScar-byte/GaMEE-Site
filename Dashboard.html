@@ -92,20 +92,6 @@
             });
         });
     
-        // Monitor user authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is authenticated
-                loadUserData(user);
-            } else {
-                // User is not authenticated
-                setTimeout(() => {
-                    window.location.href = "/GaMEE-Site/index.html";
-                }, 100); // Slight delay ensures no conflict
-            }
-        });
-
-    
         // Ensure UID and default data are saved to Firestore
         function ensureUserInFirestore(user) {
             const userRef = doc(db, "users", user.uid);
