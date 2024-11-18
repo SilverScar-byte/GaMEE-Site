@@ -72,7 +72,7 @@
             messagingSenderId: "your-sender-id",
             appId: "your-app-id",
             measurementId: "your-measurement-id"
-            };
+        };
     
         // Initialize Firebase app and services
         const app = initializeApp(firebaseConfig);
@@ -83,6 +83,21 @@
         const cloudName = "your-cloudinary-cloud-name"; // Cloudinary cloud name
         const unsignedUploadPreset = "your-upload-preset"; // Cloudinary upload preset
     
+        // Flag to check if authentication is being processed
+        let isCheckingAuth = true;
+
+        // Monitor user authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (isCheckingAuth) {
+                isCheckingAuth = false; // Make sure the check runs only once
+                if (user) {
+                    loadUserData(user);
+                } else {
+                    window.location.href = "/GaMEE-Site/index.html"; // Redirect to login page if no user is authenticated
+                }
+            }
+        });
+
         // Logout functionality
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
@@ -91,7 +106,7 @@
                 console.error("Logout error:", error);
             });
         });
-    
+
         // Ensure UID and default data are saved to Firestore
         function ensureUserInFirestore(user) {
             const userRef = doc(db, "users", user.uid);
@@ -136,7 +151,6 @@
             });
         }
 
-
         // Automatically save data when the user leaves an input field
         const inputs = document.querySelectorAll('#username, #main-hero, #overview-text-box, #achievements-text-box');
         inputs.forEach(input => input.addEventListener('blur', saveUserData));
@@ -152,7 +166,7 @@
                     overview: document.getElementById('overview-text-box').value,
                     achievements: document.getElementById('achievements-text-box').value,
                 };
-                    setDoc(userRef, userData, { merge: true }).then(() => {
+                setDoc(userRef, userData, { merge: true }).then(() => {
                     console.log("User data saved!");
                 }).catch((error) => {
                     console.error("Error saving user data:", error);
