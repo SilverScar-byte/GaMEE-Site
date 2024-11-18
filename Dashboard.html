@@ -72,8 +72,8 @@
             messagingSenderId: "your-sender-id",
             appId: "your-app-id",
             measurementId: "your-measurement-id"
-        };
-
+            };
+    
         // Initialize Firebase app and services
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -82,7 +82,7 @@
         // Cloudinary configuration
         const cloudName = "your-cloudinary-cloud-name"; // Cloudinary cloud name
         const unsignedUploadPreset = "your-upload-preset"; // Cloudinary upload preset
-
+    
         // Logout functionality
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
@@ -91,17 +91,43 @@
                 console.error("Logout error:", error);
             });
         });
-
+    
         // Monitor user authentication state
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 // Redirect to login page if user is not authenticated
                 window.location.href = "/GaMEE-Site/index.html";
             } else {
-                // Load user data from Firestore if authenticated
+                console.log("User logged in:", user.uid);
+                // Save UID and user data to Firestore
+                ensureUserInFirestore(user);
                 loadUserData(user);
             }
         });
+    
+        // Ensure UID and default data are saved to Firestore
+        function ensureUserInFirestore(user) {
+            const userRef = doc(db, "users", user.uid);
+            getDoc(userRef).then((docSnap) => {
+                if (!docSnap.exists()) {
+                    // Set default values if the document doesn't exist
+                    const defaultData = {
+                        profilePicture: 'default-profile.jpg',
+                        username: user.email,
+                        mainHero: '',
+                        overview: '',
+                        achievements: ''
+                    };
+                    setDoc(userRef, defaultData, { merge: true }).then(() => {
+                        console.log("Default user data saved!");
+                    }).catch((error) => {
+                        console.error("Error saving default user data:", error);
+                    });
+                }
+            }).catch((error) => {
+                console.error("Error checking user document:", error);
+            });
+        }
 
         // Load user data from Firestore
         function loadUserData(user) {
@@ -115,19 +141,16 @@
                     document.getElementById('main-hero').value = data.mainHero || '';
                     document.getElementById('overview-text-box').value = data.overview || '';
                     document.getElementById('achievements-text-box').value = data.achievements || '';
-
-                    // Save loaded data to Firestore
-                    saveUserData();
                 }
             }).catch((error) => {
                 console.error("Error loading user data:", error);
-            });
+                });
         }
 
         // Automatically save data when the user leaves an input field
         const inputs = document.querySelectorAll('#username, #main-hero, #overview-text-box, #achievements-text-box');
         inputs.forEach(input => input.addEventListener('blur', saveUserData));
-
+    
         // Save user data to Firestore
         function saveUserData() {
             const user = auth.currentUser;
@@ -139,7 +162,7 @@
                     overview: document.getElementById('overview-text-box').value,
                     achievements: document.getElementById('achievements-text-box').value,
                 };
-                setDoc(userRef, userData, { merge: true }).then(() => {
+                    setDoc(userRef, userData, { merge: true }).then(() => {
                     console.log("User data saved!");
                 }).catch((error) => {
                     console.error("Error saving user data:", error);
@@ -154,7 +177,7 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('upload_preset', unsignedUploadPreset);
-
+    
                 // Upload to Cloudinary
                 fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                     method: 'POST',
