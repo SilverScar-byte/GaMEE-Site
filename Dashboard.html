@@ -95,7 +95,7 @@ function loadUserData(user) {
     getDoc(userRef).then((docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            document.getElementById('profile-picture').src = data.profilePicture || 'images/default-profile.jpg';
+            document.getElementById('profile-picture').src = data.profilePicture || 'default-profile.jpg';
             document.getElementById('username').value = data.username || '';
             document.getElementById('main-hero').value = data.mainHero || '';
             document.getElementById('overview-text-box').value = data.overview || '';
@@ -105,7 +105,12 @@ function loadUserData(user) {
         console.error("Error loading user data:", error);
     });
 }
-
+        // Add blur event listeners to inputs and textareas
+        const inputs = document.querySelectorAll('#username, #main-hero, #overview-text-box, #achievements-text-box');
+        inputs.forEach(input => {
+            input.addEventListener('blur', saveUserData);
+        });
+        
 // Save user data to Firestore
 function saveUserData() {
     const user = auth.currentUser;
@@ -123,13 +128,7 @@ function saveUserData() {
             console.error("Error saving user data:", error);
         });
     }
-}
-        // Add blur event listeners to inputs and textareas
-        const inputs = document.querySelectorAll('#username, #main-hero, #overview-text-box, #achievements-text-box');
-        inputs.forEach(input => {
-            input.addEventListener('blur', saveUserData);
-        });
-        
+
 // Handle profile picture upload
 document.getElementById('upload-profile').addEventListener('change', (e) => {
     const file = e.target.files[0];
